@@ -12,7 +12,7 @@
             quickUnion.Union('d', 'c');
             quickUnion.Union('c', 'a');
             quickUnion.Union('a', 'z');
-
+            quickUnion.Union('e', 'b');
            // quickUnion.Union('i', 'h');
             //quickUnion.Union('g', 'f');
             //quickUnion.Union('h', 'e');

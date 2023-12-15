@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace UnionFind
 {
-    internal class QuickUnion<T>
+    public class QuickUnion<T>
     {
         private int[] parents;
         private Dictionary<T, int> map;
@@ -43,7 +43,6 @@ namespace UnionFind
             return current;
         }
 
-        //TO DO: figure out a way to know how many children a node has because count is 0 when needed to be more
         private int Find(T p, out int count)
         {
             int current = parents[map[p]];

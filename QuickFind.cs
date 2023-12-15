@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace UnionFind
 {
-    internal class QuickFind<T>
+    public class QuickFind<T>
     {
         private int[] sets;
         private Dictionary<T, int> map;
