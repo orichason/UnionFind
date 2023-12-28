@@ -12,13 +12,13 @@
             quickUnion.Union('d', 'c');
             quickUnion.Union('c', 'a');
             quickUnion.Union('a', 'z');
-            quickUnion.Union('e', 'b');
+            quickUnion.Union('e', 'z');
            // quickUnion.Union('i', 'h');
             //quickUnion.Union('g', 'f');
             //quickUnion.Union('h', 'e');
             //quickUnion.Union('f', 'e');
             //quickUnion.Union('i', 'd');
-            quickUnion.Union('a', 'z');
+            //quickUnion.Union('a', 'z');
 
 
             for (char i = 'a'; i < 'i'; i++)
