@@ -54,11 +54,6 @@ namespace UnionFind
         {
             if (!map.ContainsKey(p) || !map.ContainsKey(q)) throw new ArgumentException("Key(s) not in map");
 
-            //int pCount;
-            //int qCount;
-            //int setP = Find(p, out pCount);
-            //int setQ = Find(q, out qCount);
-
             int pRoot = Find(p);
             int qRoot = Find(q);
 
