@@ -9,14 +9,14 @@ namespace UnionFind
 {
     public class QuickUnion<T>
     {
-        struct Node
+        public struct Node
         {
             public int Value;
             public int SubTreeCount;
         }
 
-        private Node[] parents;
-        private Dictionary<T, int> map;
+        public Node[] parents;
+        public Dictionary<T, int> map;
 
         public QuickUnion(IEnumerable<T> items)
         {

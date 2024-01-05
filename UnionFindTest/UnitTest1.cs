@@ -48,43 +48,61 @@ namespace UnionFindTest
             Random random = new(seed);
             TestUnion quickUnion = new(items);
 
-
-            List<TestUnion> unionList = new((int)Math.Pow(2, numberOfUnions));
-
-            for (int i = 0; i < unionList.Count; i++)
+            for (int i = 0; i < numberOfUnions; i++)
             {
-                unionList.Add(//call tuple returning function);
+                int indexToSet = random.Next(items.Length);
+                int newIndex = random.Next(items.Length);
+
+                if (indexToSet == newIndex)
+                {
+                    i--;
+                    continue;
+                }
+
+                quickUnion.Union(items[indexToSet], items[newIndex]);
             }
 
-            //int count = 0;
-            //while (count < numberOfUnions)
-            //{
-            //    int pIndex = random.Next(items.Length);
-            //    int qIndex = random.Next(items.Length);
-            //    if (pIndex == qIndex)
-            //    {
-            //        continue;
-            //    }
+            List<TestUnion> slowUnionList = new((int)Math.Pow(2, numberOfUnions));
 
+            for (int i = 0; i < slowUnionList.Capacity; i++)
+            {
+                // { 'a', 'b', 'c', 'd', 'z' }
+                TestUnion temp = new(items);
+                int unionIndex = i % items.Length;
+                for (int j = 0, unionCount = 0; unionCount < numberOfUnions; j++, unionCount++)
+                {
+                    if(unionIndex == j)
+                    {
+                        unionCount--;
+                        continue;
+                    }
+                    SlowUnion(temp, items[unionIndex], items[j % items.Length]);
+                }
+                slowUnionList.Add(temp);
+            }
 
-            //    count++;
-            //    quickUnion.Union(items[pIndex], items[qIndex]);
-            //}
-
-
-            //figure out a way to compare to other trees or a way to to determine if union is being efficient
-        }        
-
-        public (TestUnion, TestUnion) Union(TestUnion quickUnion)
-        {
-
-            
-            //call Union from here and save into the tuple
+            for (int i = 0; i < slowUnionList.Count; i++)
+            {
+                for (int j = 0; j < items.Length; j++)
+                {
+                    if (slowUnionList[i].parents[j].SubTreeCount < quickUnion.parents[j].SubTreeCount)
+                    {
+                        Assert.Fail();
+                    }
+                }
+            }
         }
 
-        private TestUnion Union(TestUnion quickUnion)
+        public void SlowUnion(TestUnion testUnion, char p, char q)
         {
-            //make regular union here (not fast version)
+            //TODO: breakpoint and make sure everything is unioning correctly and then compare children counts when done
+            if (!testUnion.map.ContainsKey(p) || !testUnion.map.ContainsKey(q)) throw new ArgumentException("Key(s) not in map");
+            int setToChange = testUnion.Find(p);
+            int newSet = testUnion.Find(q);
+
+            testUnion.parents[setToChange].Value = newSet;
+            testUnion.parents[newSet].SubTreeCount += testUnion.parents[newSet].SubTreeCount;
+           
         }
     }
 }

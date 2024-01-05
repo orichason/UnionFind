@@ -10,7 +10,7 @@ namespace UnionFind
     public class QuickFind<T>
     {
         private int[] sets;
-        private Dictionary<T, int> map;
+        Dictionary<T, int> map;
 
         public QuickFind(IEnumerable<T> items)
         {
