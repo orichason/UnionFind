@@ -47,6 +47,18 @@ namespace UnionFindTest
         {
             Random random = new(seed);
             TestUnion quickUnion = new(items);
+            List<TestUnion> slowUnionList = new((int)Math.Pow(2, numberOfUnions));
+
+            for (int i = 0; i < numberOfUnions; i++)
+            {
+                int rowSize = (int)Math.Pow(2, i);
+                for (int j = 0; j < rowSize; j++)
+                {
+                    //double up
+                    //TODO: get the unions, add both to the list
+                    //slowUnionList.Add(GetUnions())
+                }
+            }
 
             for (int i = 0; i < numberOfUnions; i++)
             {
@@ -61,11 +73,24 @@ namespace UnionFindTest
 
                 quickUnion.Union(items[indexToSet], items[newIndex]);
             }
-
+            /*
             List<TestUnion> slowUnionList = new((int)Math.Pow(2, numberOfUnions));
+
+            TestUnion start = new(items);
+
+            for (int i = 0, unionCount = 0; i < slowUnionList.Capacity; i++, unionCount*=2)
+            {
+                slowUnionList.Add(new TestUnion(items));
+                for (int j = 0, unionIndex = i % items.Length; j < unionCount; j++)
+                {
+                    TestUnion temp1 = new(items);
+
+                }
+            }
 
             for (int i = 0; i < slowUnionList.Capacity; i++)
             {
+
                 // { 'a', 'b', 'c', 'd', 'z' }
                 TestUnion temp = new(items);
                 int unionIndex = i % items.Length;
@@ -91,7 +116,25 @@ namespace UnionFindTest
                     }
                 }
             }
+            */
         }
+
+        private TestUnion GetUnions(TestUnion testUnion, char p, char q)
+        {
+            var unionOne = testUnion;
+            var unionTwo = testUnion.Clone();
+
+            
+            Union(unionOne, p, q);
+            Union(unionTwo, q, p);
+
+            //only returning unionTwo because unionOne is referenced to testUnion (which is passed in and modified)
+            return unionTwo;
+        }
+
+        private void Union(TestUnion testUnion, char p, char q)
+           => testUnion.parents[testUnion.Find(p)].Value = testUnion.Find(q);
+
 
         public void SlowUnion(TestUnion testUnion, char p, char q)
         {
@@ -101,8 +144,22 @@ namespace UnionFindTest
             int newSet = testUnion.Find(q);
 
             testUnion.parents[setToChange].Value = newSet;
-            testUnion.parents[newSet].SubTreeCount += testUnion.parents[newSet].SubTreeCount;
-           
+            testUnion.parents[newSet].SubTreeCount += testUnion.parents[setToChange].SubTreeCount;
+
+
         }
+
+        //void DoStuff(int a, int b)
+        //{
+        //    {
+        //        int c = 10;
+
+        //        void Helper()
+        //        {
+        //            c = 20;
+        //        }
+        //        Helper();
+        //    }            
+        //}
     }
 }

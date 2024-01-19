@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -38,6 +39,13 @@ namespace UnionFind
             }
         }
 
+        private QuickUnion(QuickUnion<T> quickUnion)
+        {
+            this.map = quickUnion.map;
+
+            this.parents = (Node[])quickUnion.parents.Clone();
+        }
+
         public int Find(T p)
         {
             int current = parents[map[p]].Value; 
@@ -71,5 +79,10 @@ namespace UnionFind
 
             return true;
         }
+
+        public QuickUnion<T> Clone()
+        {
+            return new(this);
+        }        
     }
 }
