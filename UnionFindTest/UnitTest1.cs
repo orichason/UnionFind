@@ -1,3 +1,6 @@
+using System.Globalization;
+using System.Net.Quic;
+
 using UnionFind;
 
 using TestUnion = UnionFind.QuickUnion<char>;
@@ -41,92 +44,60 @@ namespace UnionFindTest
 
 
         [TestMethod]
-        [DataRow(new char[] { 'a', 'b', 'c', 'd', 'z' }, 10, 1)]
+        public void EasyPathTest() => QuickestPathTest(['a', 'b', 'c', 'd', 'e'], [('a', 'b'), ('c', 'd'), ('d', 'a')], 1);
+        //[DataRow(new char[] { 'a', 'b', 'c', 'd', 'z' }, new (char, char)[] { ('a', 'b')} , 1)]
 
-        public void QuickestPathTest(char[] items, int numberOfUnions, int seed)
+        public void QuickestPathTest(char[] items, (char, char)[] unions, int seed)
         {
-            Random random = new(seed);
-            TestUnion quickUnion = new(items);
-            List<TestUnion> slowUnionList = new((int)Math.Pow(2, numberOfUnions));
+            List<TestUnion> slowUnionList = GetAllPermutations(items, unions);
 
-            for (int i = 0; i < numberOfUnions; i++)
+            for (int i = 0; i < slowUnionList.Count; i++)
+            {
+                int totalCountForUnion = 0;
+                int lowestCount = 0;
+
+                for (int j = 0; j < items.Length; j++)
+                {
+                    int tempCount = Find(slowUnionList[i], items[j]);
+                    totalCountForUnion += tempCount;
+                }
+
+                if(totalCountForUnion < lowestCount)
+                {
+                    lowestCount = totalCountForUnion;
+                }
+            }
+
+        }
+
+        private List<TestUnion> GetAllPermutations(char[] items, (char, char)[] unions)
+        {
+            TestUnion quickUnion = new(items);
+            List<TestUnion> slowUnionList = new((int)Math.Pow(2, unions.Length));
+
+            for (int i = 0; i < unions.Length; i++)
             {
                 int rowSize = (int)Math.Pow(2, i);
                 for (int j = 0; j < rowSize; j++)
                 {
-                    //double up
-                    //TODO: get the unions, add both to the list
-                    //slowUnionList.Add(GetUnions())
+                    TestUnion union = slowUnionList[j];
+                    TestUnion temp = GetUnions(union, unions[i]);
+
+                    slowUnionList[j] = union;
+                    slowUnionList.Add(temp);
                 }
             }
 
-            for (int i = 0; i < numberOfUnions; i++)
-            {
-                int indexToSet = random.Next(items.Length);
-                int newIndex = random.Next(items.Length);
-
-                if (indexToSet == newIndex)
-                {
-                    i--;
-                    continue;
-                }
-
-                quickUnion.Union(items[indexToSet], items[newIndex]);
-            }
-            /*
-            List<TestUnion> slowUnionList = new((int)Math.Pow(2, numberOfUnions));
-
-            TestUnion start = new(items);
-
-            for (int i = 0, unionCount = 0; i < slowUnionList.Capacity; i++, unionCount*=2)
-            {
-                slowUnionList.Add(new TestUnion(items));
-                for (int j = 0, unionIndex = i % items.Length; j < unionCount; j++)
-                {
-                    TestUnion temp1 = new(items);
-
-                }
-            }
-
-            for (int i = 0; i < slowUnionList.Capacity; i++)
-            {
-
-                // { 'a', 'b', 'c', 'd', 'z' }
-                TestUnion temp = new(items);
-                int unionIndex = i % items.Length;
-                for (int j = 0, unionCount = 0; unionCount < numberOfUnions; j++, unionCount++)
-                {
-                    if(unionIndex == j)
-                    {
-                        unionCount--;
-                        continue;
-                    }
-                    SlowUnion(temp, items[unionIndex], items[j % items.Length]);
-                }
-                slowUnionList.Add(temp);
-            }
-
-            for (int i = 0; i < slowUnionList.Count; i++)
-            {
-                for (int j = 0; j < items.Length; j++)
-                {
-                    if (slowUnionList[i].parents[j].SubTreeCount < quickUnion.parents[j].SubTreeCount)
-                    {
-                        Assert.Fail();
-                    }
-                }
-            }
-            */
+            return slowUnionList;
         }
-
-        private TestUnion GetUnions(TestUnion testUnion, char p, char q)
+        private TestUnion GetUnions(TestUnion testUnion, (char, char) unions)
         {
             var unionOne = testUnion;
             var unionTwo = testUnion.Clone();
 
-            
-            Union(unionOne, p, q);
-            Union(unionTwo, q, p);
+
+            Union(unionOne, unions.Item1, unions.Item2);
+            Union(unionTwo, unions.Item2, unions.Item1);
 
             //only returning unionTwo because unionOne is referenced to testUnion (which is passed in and modified)
             return unionTwo;
@@ -145,21 +116,20 @@ namespace UnionFindTest
 
             testUnion.parents[setToChange].Value = newSet;
             testUnion.parents[newSet].SubTreeCount += testUnion.parents[setToChange].SubTreeCount;
-
-
+        
         }
+        int Find(TestUnion union, char p)
+        {
+            int current = union.parents[union.map[p]].Value;
+            int count = 0;
 
-        //void DoStuff(int a, int b)
-        //{
-        //    {
-        //        int c = 10;
+            while (union.parents[current].Value != current)
+            {
+                current = union.parents[current].Value;
+                count++;
+            }
 
-        //        void Helper()
-        //        {
-        //            c = 20;
-        //        }
-        //        Helper();
-        //    }            
-        //}
+            return count;
+        }
     }
 }
