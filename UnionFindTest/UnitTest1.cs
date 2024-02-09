@@ -130,7 +130,7 @@ namespace UnionFindTest
                 for (int j = 0; j < rowSize; j++)
                 {
                     TestUnion union = slowUnionList[j];
-                    TestUnion temp = GetUnions(union, unions[i]);
+                    TestUnion temp = GenerateChildUnions(union, unions[i]);
 
                     slowUnionList[j] = union;
                     slowUnionList.Add(temp);
