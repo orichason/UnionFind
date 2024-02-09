@@ -14,6 +14,7 @@ namespace UnionFind
         {
             public int Value;
             public int SubTreeCount;
+            public override string ToString() => $"Parent : {Value}";
         }
 
         public Node[] parents;
